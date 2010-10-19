@@ -15,6 +15,6 @@ package alma.publication;
  * @author Fréderic Dumont
  *
  */
-public class PublishService {
+public class PublishComponent {
 
 }

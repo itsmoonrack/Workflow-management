@@ -14,8 +14,7 @@ package alma.news;
  * @author Fréderic Dumont
  *
  */
-public class NewsPoolService {
+public class NewsPoolComponent {
 	
-	// Change par Fred
 
 }

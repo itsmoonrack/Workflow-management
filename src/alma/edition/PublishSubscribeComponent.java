@@ -13,6 +13,6 @@ package alma.edition;
  * @author Fréderic Dumont
  *
  */
-public class PublishSubscribeService {
+public class PublishSubscribeComponent {
 
 }
