@@ -17,7 +17,7 @@ public class Listener implements MessageListener{
 			} 
 			if(message instanceof ObjectMessageImpl){
 				System.out.println("Message type : Release");
-				Release tempRelease = (Release) ((ObjectMessageImpl) message).getObject();
+				ReleaseVO tempRelease = (ReleaseVO) ((ObjectMessageImpl) message).getObject();
 				System.out.println(tempRelease.categorie);
 			}
 			

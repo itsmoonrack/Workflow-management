@@ -11,18 +11,18 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class Editor implements Runnable {
+public class EditorVO implements Runnable {
 
 	private static String destName = "topic1";
 	public static String categorie = "SPORT";
 	private static String messageReceived = null;
 	
 	public static void main(String argc[]) {
-		Thread test = new Thread(new Editor());
+		Thread test = new Thread(new EditorVO());
 		test.start();
 	}
 	
-	public Editor(){
+	public EditorVO(){
 	}
 	
 	@Override

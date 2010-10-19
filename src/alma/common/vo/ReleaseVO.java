@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Class Release
  *
  */
-public class Release implements Serializable {
+public class ReleaseVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -19,7 +19,7 @@ public class Release implements Serializable {
 	/**
 	 * Constructor for Release
 	 */
-	public Release(int id){
+	public ReleaseVO(int id){
 		this.id = id;
 	}
 	

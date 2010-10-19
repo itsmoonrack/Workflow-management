@@ -7,6 +7,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TopicConnection;
+import javax.jms.TopicConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -21,9 +23,12 @@ public abstract class SessionMessageSender {
 	}
 	
 	public void send() {
+		
 		Context context = null;
-		ConnectionFactory factory = null;
-		Connection connection = null;
+		TopicConnectionFactory factory = null;
+		//ConnectionFactory factory = null;
+//		Connection connection = null;
+		TopicConnection connection = null;
 		String factoryName = "ConnectionFactory";
 		Destination dest = null;
 		MessageProducer sender = null;
@@ -33,13 +38,13 @@ public abstract class SessionMessageSender {
 			context = new InitialContext();
 			
 			// look up the ConnectionFactory
-			factory = (ConnectionFactory) context.lookup(factoryName);
+			factory = (TopicConnectionFactory) context.lookup(factoryName);
 			
 			// look up the Destination
 			dest = (Destination) context.lookup(destName);
 			
 			// create the connection
-			connection = factory.createConnection();
+			connection = factory.createTopicConnection();
 			
 			// create the session
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
