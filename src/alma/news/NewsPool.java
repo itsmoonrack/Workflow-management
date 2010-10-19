@@ -1,16 +1,8 @@
 package alma.news;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import alma.common.services.SessionMessageSender;
 import alma.common.vo.NewsVO;
@@ -37,9 +29,7 @@ public class NewsPool extends SessionMessageSender {
 
 	protected Message createMessage() throws JMSException {
 		NewsVO news = DummyNews.generate();
-		ObjectMessage message = session.createObjectMessage();
-		message.setObject(news);
-		return message;
+		return session.createObjectMessage(news);
 	}
 
 }

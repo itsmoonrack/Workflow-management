@@ -1,8 +1,5 @@
 package alma.common.services;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
