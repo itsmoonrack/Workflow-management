@@ -12,7 +12,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import alma.common.vo.News;
+import alma.common.vo.NewsVO;
 import alma.common.vo.Release;
 
 /**
@@ -74,8 +74,8 @@ public class NewsPoolComponent {
 			connection.start();
 
 			// create a release
-			News news = new News();
-			news.setTitle("Hello");
+			NewsVO news = new NewsVO();
+			//news.setTitle("Hello");
 			release.addNews(news);
 			releaseMessage = session.createObjectMessage(release);
 			

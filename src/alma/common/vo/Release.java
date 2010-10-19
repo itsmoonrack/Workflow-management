@@ -27,6 +27,6 @@ public class Release implements Serializable {
 	 * Add a news in the list
 	 * @param news
 	 */
-	public void addNews(News news){
+	public void addNews(NewsVO news){
 	}
 }
