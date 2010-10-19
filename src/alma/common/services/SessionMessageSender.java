@@ -1,14 +1,13 @@
 package alma.common.services;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicPublisher;
+import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -16,7 +15,7 @@ import javax.naming.NamingException;
 public abstract class SessionMessageSender {
 	
 	public static String destName;
-	protected Session session = null;
+	protected TopicSession session = null;
 	
 	public SessionMessageSender(String destination) {
 		destName = destination;
@@ -26,12 +25,11 @@ public abstract class SessionMessageSender {
 		
 		Context context = null;
 		TopicConnectionFactory factory = null;
-		//ConnectionFactory factory = null;
-//		Connection connection = null;
 		TopicConnection connection = null;
 		String factoryName = "ConnectionFactory";
-		Destination dest = null;
-		MessageProducer sender = null;
+
+		Topic dest = null;
+		TopicPublisher topicPublisher = null;
 		
 		try {
 			// create the JNDI initial context.
@@ -41,24 +39,24 @@ public abstract class SessionMessageSender {
 			factory = (TopicConnectionFactory) context.lookup(factoryName);
 			
 			// look up the Destination
-			dest = (Destination) context.lookup(destName);
+			dest = (Topic) context.lookup(destName);
 			
 			// create the connection
 			connection = factory.createTopicConnection();
 			
 			// create the session
-			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 			
 			// create the sender
-			sender = session.createProducer(dest);
+			topicPublisher = session.createPublisher(dest);
 			
 			// start the connection, to enable message sends
 			connection.start();
 			
 			// call the send method.
 			Message message = createMessage();
-			sender.send(message);
-//			Logger.getLogger(destName).log(Level.ALL, "Sent: " + message);
+			topicPublisher.publish(message);
+
 			System.out.println("Sent: " + message);
 			
 		} catch (JMSException e) {

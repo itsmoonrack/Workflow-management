@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.Vector;
 
 public class NewsVO implements Serializable {
+
 	public int id;
-	public Vector<Categorie> categories = new Vector<Categorie>();
+	public Vector<CategorieVO> categories = new Vector<CategorieVO>();
 	public String author;
 	public String text;
 
@@ -15,11 +16,11 @@ public class NewsVO implements Serializable {
 		init(news.id, news.categories, news.author, news.text);
 	}
 	
-	public NewsVO(int id, Vector<Categorie> categories, String author, String text) {
+	public NewsVO(int id, Vector<CategorieVO> categories, String author, String text) {
 		init(id, categories, author, text);
 	}
 	
-	public void init(int id, Vector<Categorie> categories, String author, String text) {
+	public void init(int id, Vector<CategorieVO> categories, String author, String text) {
 		this.id = id;
 		this.categories = categories;
 		this.author = author;

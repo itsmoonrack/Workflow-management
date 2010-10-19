@@ -1,5 +1,7 @@
 package alma.edition;
 
+import alma.common.services.SessionMessageReceiver;
+
 /**
  * Publish/Subscribe Service.
  * 
@@ -13,6 +15,9 @@ package alma.edition;
  * @author Fréderic Dumont
  *
  */
-public class PublishSubscribeComponent {
-
+public class PublishSubscribeComponent extends SessionMessageReceiver implements Runnable {
+	
+	public PublishSubscribeComponent(String destination){
+		super(destination);
+	}
 }
