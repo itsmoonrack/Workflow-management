@@ -1,34 +1,45 @@
 package alma.news;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
+import alma.common.services.SessionMessageSender;
+import alma.common.vo.NewsVO;
 
 /**
- * Message-Driven Bean implementation class for: NewsPool
+ * NewsPool Service.
+ * 
+ * The news pool produces/retrieves some text, which belong to specific 
+ * categories (it is useless to model further its treatment), and send it to a
+ * publish/subscribe component. The latter is accessed by a set of editors that
+ * treat the news dispatch for which they are interested in, and thus, they have
+ * subscribe to. The pool also sends the news dispatch <em>id</em> to the
+ * editor-in-chief, in a <em>secure</em> and <em>acknowledged</em> way.
+ * 
+ * @author Sylvain Lecoy
+ * @author Fréderic Dumont
  *
  */
-@MessageDriven(
-		activationConfig = { @ActivationConfigProperty(
-				propertyName = "destinationType", propertyValue = "javax.jms.Topic"
-		) }, 
-		mappedName = "editors")
-public class NewsPool implements MessageListener {
+public class NewsPool extends SessionMessageSender {
 
-    /**
-     * Default constructor. 
-     */
-    public NewsPool() {
-        // TODO Auto-generated constructor stub
-    }
-	
-	/**
-     * @see MessageListener#onMessage(Message)
-     */
-    public void onMessage(Message message) {
-        // TODO Auto-generated method stub
-        
-    }
+	public NewsPool(String destination) {
+		super(destination);
+	}
+
+	protected Message createMessage() throws JMSException {
+		NewsVO news = DummyNews.generate();
+		ObjectMessage message = session.createObjectMessage();
+		message.setObject(news);
+		return message;
+	}
 
 }

@@ -5,10 +5,16 @@
   <version>0.0.1</version>
   <dependencies>
   	<dependency>
-  		<groupId>javax</groupId>
-  		<artifactId>javaee-api</artifactId>
-  		<version>6.0</version>
+  		<groupId>openjms</groupId>
+  		<artifactId>openjms</artifactId>
+  		<version>0.7.6</version>
   		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>javax.jms</groupId>
+  		<artifactId>jms</artifactId>
+  		<version>1.1</version>
   		<scope>compile</scope>
   	</dependency>
   </dependencies>
