@@ -2,7 +2,6 @@ package alma.news;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 
 import alma.common.services.SessionMessageSender;
 import alma.common.vo.NewsVO;

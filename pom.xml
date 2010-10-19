@@ -3,6 +3,8 @@
   <groupId>Workflow-management</groupId>
   <artifactId>Workflow-management</artifactId>
   <version>0.0.1</version>
+  <scm>
+  </scm>
   <dependencies>
   	<dependency>
   		<groupId>openjms</groupId>
