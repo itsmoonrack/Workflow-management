@@ -15,5 +15,7 @@ package alma.news;
  *
  */
 public class NewsPoolService {
+	
+	// Change par Fred
 
 }
