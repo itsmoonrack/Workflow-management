@@ -8,5 +8,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/comptes/E064038G/Bureau/openjms-0.7.7-beta-1/lib/openjms-0.7.7-beta-1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
