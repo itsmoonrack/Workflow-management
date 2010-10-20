@@ -18,23 +18,18 @@ import org.exolab.jms.message.ObjectMessageImpl;
 import alma.common.vo.CategorieVO;
 import alma.common.vo.ReleaseVO;
 
-public class SessionMessageReceiver implements Runnable, MessageListener {
+public class MessageReceiver implements Runnable, MessageListener {
 
-	public String destination;
-	public CategorieVO categorie;
-	public String name;
+	public static String destName;
 
-	public SessionMessageReceiver() {
+	public MessageReceiver() {
 
 	}
-
-	public SessionMessageReceiver(String destName, CategorieVO categorie, String name) {
-		this.destination = destName;
-		this.categorie = categorie;
-		this.name = name;
+	
+	public MessageReceiver(String destination) {
+		destName = destination;
 	}
-
-	@Override
+	
 	public void run() {
 		
 		Context context = null;

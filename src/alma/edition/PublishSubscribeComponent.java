@@ -1,6 +1,6 @@
 package alma.edition;
 
-import alma.common.services.SessionMessageReceiver;
+import alma.common.services.MessageReceiver;
 import alma.common.vo.CategorieVO;
 
 /**
@@ -16,7 +16,7 @@ import alma.common.vo.CategorieVO;
  * @author Fréderic Dumont
  *
  */
-public class PublishSubscribeComponent extends SessionMessageReceiver implements Runnable {
+public class PublishSubscribeComponent extends MessageReceiver implements Runnable {
 	
 	public PublishSubscribeComponent(String destination, CategorieVO categorie, String name) throws InterruptedException{
 		super(destination,categorie,name);

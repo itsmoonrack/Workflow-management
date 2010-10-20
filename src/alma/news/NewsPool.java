@@ -3,7 +3,7 @@ package alma.news;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import alma.common.services.SessionMessageSender;
+import alma.common.services.QueueMessageSender;
 import alma.common.vo.NewsVO;
 
 /**
@@ -20,7 +20,7 @@ import alma.common.vo.NewsVO;
  * @author Fréderic Dumont
  *
  */
-public class NewsPool extends SessionMessageSender {
+public class NewsPool extends QueueMessageSender {
 
 	public NewsPool(String destination) {
 		super(destination);
