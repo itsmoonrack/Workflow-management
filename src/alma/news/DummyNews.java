@@ -1,7 +1,5 @@
 package alma.news;
 
-import java.io.Serializable;
-
 import alma.common.vo.CategorieVO;
 import alma.common.vo.NewsVO;
 
