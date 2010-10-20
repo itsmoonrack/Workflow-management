@@ -1,6 +1,7 @@
 package alma.common.services;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
@@ -13,17 +14,12 @@ import javax.naming.NamingException;
 public abstract class TopicMessageSender extends MessageSender {
 	
 	protected TopicSession session = null;
+	protected TopicPublisher topicPublisher = null;
 
 	public TopicMessageSender(String destination) {
-		destName = destination;
-	}
-
-	public void send() {
-		
 		TopicConnectionFactory factory = null;
-		TopicConnection connection = null;
 		Topic dest = null;
-		TopicPublisher topicPublisher = null;
+		
 		
 		try {
 			// create the JNDI initial context.
@@ -33,13 +29,13 @@ public abstract class TopicMessageSender extends MessageSender {
 			factory = (TopicConnectionFactory) context.lookup(factoryName);
 
 			// look up the Destination
-			dest = (Topic) context.lookup(destName);
+			dest = (Topic) context.lookup(destination);
 
 			// create the connection
 			connection = factory.createTopicConnection();
 
 			// create the session
-			session = connection.createTopicSession(false,
+			session = ((TopicConnection)connection).createTopicSession(false,
 					Session.AUTO_ACKNOWLEDGE);
 			
 			// create the sender
@@ -47,32 +43,36 @@ public abstract class TopicMessageSender extends MessageSender {
 			
 			// start the connection, to enable message sends
 			connection.start();
-			
-			topicPublisher.publish(createMessage());
 
 		} catch (JMSException e) {
 			e.printStackTrace();
 		} catch (NamingException e) {
 			e.printStackTrace();
-		} finally {
-			// close the context
-			if (context != null) {
-				try {
-					context.close();
-				} catch (NamingException e) {
-					e.printStackTrace();
-				}
-			}
-
-			// close the connection
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (JMSException e) {
-					e.printStackTrace();
-				}
+		}
+	}
+	
+	public void close() {
+		// close the context
+		if (context != null) {
+			try {
+				context.close();
+			} catch (NamingException e) {
+				e.printStackTrace();
 			}
 		}
+
+		// close the connection
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void publish(Message message) throws JMSException {
+		topicPublisher.publish(message);
 	}
 
 }

@@ -1,5 +1,10 @@
 package alma.publication;
 
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
+import alma.common.services.AsyncReceiver;
+
 /**
  * Publish Service.
  * 
@@ -15,6 +20,20 @@ package alma.publication;
  * @author Fréderic Dumont
  *
  */
-public class PublishComponent {
+public class PublishComponent implements MessageListener, Runnable {
+	
+	private AsyncReceiver receiver = null;
+	
+	public PublishComponent() {
+		receiver = new AsyncReceiver("newsToValidate", this);
+	}
+
+	public void run() {
+		
+	}
+
+	public void onMessage(Message message) {
+		
+	}
 
 }

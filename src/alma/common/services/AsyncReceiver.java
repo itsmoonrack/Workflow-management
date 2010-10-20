@@ -11,28 +11,29 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class AsyncReceiver implements Runnable {
-	private static String destName = null;
+public class AsyncReceiver {
+	private Context context = null;
+	private Connection connection = null;
+	
+	private String destName = null;
+	private MessageListener messageListener = null;
 	/**
 	 * Main line.
 	 *
 	 * @param args command line arguments
 	 */
-	public AsyncReceiver(String destination){
-
+	public AsyncReceiver(String destination, MessageListener listener){
 		destName = destination;
+		messageListener = listener;
 	}
 
-	public void run() {
-		Context context = null;
+	public void setup() {
 		ConnectionFactory factory = null;
-		Connection connection = null;
 		String factoryName = "ConnectionFactory";
 		Destination dest = null;
 		Session session = null;
 		MessageConsumer consumer = null;
-		MessageListener listener = null;
-		
+
 		try {
 			// create the JNDI initial context
 			context = new InitialContext();
@@ -52,39 +53,37 @@ public class AsyncReceiver implements Runnable {
 
 			// create the receiver
 			consumer = session.createConsumer(dest);
-			
+
 			// start the connection, to enable message receipt
-            connection.start();
-			
+			connection.start();
+
 			// wire up the listener
-			listener = new Listener();
-			consumer.setMessageListener(listener);
-			
-			while (true);
+			consumer.setMessageListener(messageListener);
 
 		} catch (JMSException exception) {
 			exception.printStackTrace();
 		} catch (NamingException exception) {
 			exception.printStackTrace();
-		} finally {
-			// close the context
-			if (context != null) {
-				try {
-					context.close();
-				} catch (NamingException exception) {
-					exception.printStackTrace();
-				}
-			}
+		}
+	}
 
-			// close the connection
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (JMSException exception) {
-					exception.printStackTrace();
-				}
+	public void close() {
+		// close the context
+		if (context != null) {
+			try {
+				context.close();
+			} catch (NamingException exception) {
+				exception.printStackTrace();
 			}
 		}
 
+		// close the connection
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException exception) {
+				exception.printStackTrace();
+			}
+		}
 	}
 }

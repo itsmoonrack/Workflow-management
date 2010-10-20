@@ -1,6 +1,7 @@
 package alma.common.services;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
@@ -13,17 +14,11 @@ import javax.naming.NamingException;
 public abstract class QueueMessageSender extends MessageSender {
 
 	protected QueueSession session = null;
+	protected QueueSender queueSender = null;
 	
 	public QueueMessageSender(String destination) {
-		destName = destination;
-	}
-	
-	public void send() {
 		QueueConnectionFactory factory = null;
-		QueueConnection connection = null;
 		Queue dest = null;
-		QueueSender queueSender = null;
-		
 		try {
 			// create the JNDI initial context.
 			context = new InitialContext();
@@ -32,13 +27,13 @@ public abstract class QueueMessageSender extends MessageSender {
 			factory = (QueueConnectionFactory) context.lookup(factoryName);
 
 			// look up the Destination
-			dest = (Queue) context.lookup(destName);
+			dest = (Queue) context.lookup(destination);
 
 			// create the connection
 			connection = factory.createQueueConnection();
 
 			// create the session
-			session = connection.createQueueSession(false,
+			session = ((QueueConnection)connection).createQueueSession(false,
 					Session.AUTO_ACKNOWLEDGE);
 			
 			// create the sender
@@ -46,31 +41,35 @@ public abstract class QueueMessageSender extends MessageSender {
 			
 			// start the connection, to enable message sends
 			connection.start();
-			
-			queueSender.send(createMessage());
 
 		} catch (JMSException e) {
 			e.printStackTrace();
 		} catch (NamingException e) {
 			e.printStackTrace();
-		} finally {
-			// close the context
-			if (context != null) {
-				try {
-					context.close();
-				} catch (NamingException e) {
-					e.printStackTrace();
-				}
-			}
-
-			// close the connection
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (JMSException e) {
-					e.printStackTrace();
-				}
+		}
+	}
+	
+	public void close() {
+		// close the context
+		if (context != null) {
+			try {
+				context.close();
+			} catch (NamingException e) {
+				e.printStackTrace();
 			}
 		}
+
+		// close the connection
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void send(Message message) throws JMSException {
+		queueSender.send(message);
 	}
 }

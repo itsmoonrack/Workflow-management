@@ -20,15 +20,15 @@ import alma.common.vo.NewsVO;
  * @author Fréderic Dumont
  *
  */
-public class NewsPool extends QueueMessageSender {
+public class NewsPool implements Runnable {
 
-	public NewsPool(String destination) {
-		super(destination);
+	public NewsPool() {
+		
 	}
 
-	protected Message createMessage() throws JMSException {
-		NewsVO news = DummyNews.generate();
-		return session.createObjectMessage(news);
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
