@@ -12,6 +12,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.exolab.jms.message.MessageImpl;
+import org.exolab.jms.message.ObjectMessageImpl;
+
+import alma.common.vo.NewsVO;
+
 public abstract class SessionMessageSender {
 	
 	public static String destName;
@@ -57,7 +62,11 @@ public abstract class SessionMessageSender {
 			Message message = createMessage();
 			topicPublisher.publish(message);
 
-			System.out.println("Sent: " + message);
+			NewsVO tempNewsVO = (NewsVO) ((ObjectMessageImpl) message).getObject();
+			
+			System.out.println("A news was sent, id : " + tempNewsVO.id + " , categorie(s) : "+ tempNewsVO.categories);
+			
+			while(true);
 			
 		} catch (JMSException e) {
 			e.printStackTrace();

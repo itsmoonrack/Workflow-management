@@ -1,6 +1,7 @@
 package alma.edition;
 
 import alma.common.services.SessionMessageReceiver;
+import alma.common.vo.CategorieVO;
 
 /**
  * Publish/Subscribe Service.
@@ -17,7 +18,9 @@ import alma.common.services.SessionMessageReceiver;
  */
 public class PublishSubscribeComponent extends SessionMessageReceiver implements Runnable {
 	
-	public PublishSubscribeComponent(String destination){
-		super(destination);
+	public PublishSubscribeComponent(String destination, CategorieVO categorie, String name){
+		super(destination,categorie,name);
+		Thread ThreadPSC = new Thread(this);
+		ThreadPSC.start();
 	}
 }

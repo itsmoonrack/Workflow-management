@@ -16,24 +16,28 @@ import javax.naming.NamingException;
 
 import org.exolab.jms.message.ObjectMessageImpl;
 
+import alma.common.vo.CategorieVO;
 import alma.common.vo.NewsVO;
 
 public class SessionMessageReceiver implements Runnable, MessageListener {
 
 	public String destination;
-	public boolean subscribe = true;
+	public CategorieVO categorie;
+	public String name;
 
 	public SessionMessageReceiver() {
 
 	}
 
-	public SessionMessageReceiver(String destName) {
+	public SessionMessageReceiver(String destName, CategorieVO categorie, String name) {
 		this.destination = destName;
+		this.categorie = categorie;
+		this.name = name;
 	}
 
 	@Override
 	public void run() {
-
+		
 		Context context = null;
 		TopicConnectionFactory topicConnectionFactory = null;
 		TopicConnection topicConnection = null;
@@ -99,13 +103,18 @@ public class SessionMessageReceiver implements Runnable, MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		try {
-			if (message instanceof TextMessage) {
-				TextMessage tempText = (TextMessage) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Message type : " + tempText.getClass());
-			} 
 			if(message instanceof ObjectMessageImpl){
+				
+				//TODO change in Release when the release will be created !!!
 				NewsVO tempNewsVO = (NewsVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Message type : " + tempNewsVO.getClass());
+				System.out.println("Message categorie(s) : " + tempNewsVO.categories);
+
+				if(tempNewsVO.categories.contains(this.categorie)){
+					System.out.println(this.name + " says : YES I CAN");
+				}
+				else{
+					System.out.println(this.name + " says : NO I CAN'T");
+				}
 			}
 			
 		} catch (Throwable t) {
