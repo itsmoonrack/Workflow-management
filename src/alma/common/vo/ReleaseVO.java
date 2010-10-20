@@ -1,6 +1,7 @@
 package alma.common.vo;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 
 /**
@@ -12,9 +13,11 @@ public class ReleaseVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public static int id;
-	public static String categorie;
+	public Vector<CategorieVO> categories = new Vector<CategorieVO>();
+	public Vector<NewsVO> listNews = new Vector<NewsVO>();
 	
-	//TODO Add list of news
+	//A release can only edited by only one editor
+	public boolean available = true;
 	
 	/**
 	 * Constructor for Release
@@ -24,10 +27,18 @@ public class ReleaseVO implements Serializable {
 	}
 	
 	/**
-	 * Add a news in the list
+	 * Add a news in the list of news
 	 * @param news
 	 */
 	public void addNews(NewsVO news){
-		//TODO after create the list of news, implement this !!!
+		this.listNews.add(news);
+	}
+	
+	/**
+	 * Add a categorie for the release
+	 * @param categorie
+	 */
+	public void addCategories(CategorieVO categorie){
+		this.categories.add(categorie);
 	}
 }

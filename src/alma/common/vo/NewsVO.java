@@ -30,4 +30,8 @@ public class NewsVO implements Serializable {
 	public NewsVO getData() {
 		return new NewsVO(this);
 	}
+	
+	public void addCategorie(CategorieVO categorie){
+		this.categories.add(categorie);
+	}
 }

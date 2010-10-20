@@ -18,9 +18,9 @@ import alma.common.vo.CategorieVO;
  */
 public class PublishSubscribeComponent extends SessionMessageReceiver implements Runnable {
 	
-	public PublishSubscribeComponent(String destination, CategorieVO categorie, String name){
+	public PublishSubscribeComponent(String destination, CategorieVO categorie, String name) throws InterruptedException{
 		super(destination,categorie,name);
-		Thread ThreadPSC = new Thread(this);
-		ThreadPSC.start();
+		Thread threadPSC = new Thread(this);
+		threadPSC.start();
 	}
 }

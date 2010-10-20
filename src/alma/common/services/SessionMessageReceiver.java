@@ -4,7 +4,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
@@ -17,7 +16,7 @@ import javax.naming.NamingException;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.vo.CategorieVO;
-import alma.common.vo.NewsVO;
+import alma.common.vo.ReleaseVO;
 
 public class SessionMessageReceiver implements Runnable, MessageListener {
 
@@ -104,13 +103,19 @@ public class SessionMessageReceiver implements Runnable, MessageListener {
 	public void onMessage(Message message) {
 		try {
 			if(message instanceof ObjectMessageImpl){
-				
-				//TODO change in Release when the release will be created !!!
-				NewsVO tempNewsVO = (NewsVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Message categorie(s) : " + tempNewsVO.categories);
 
-				if(tempNewsVO.categories.contains(this.categorie)){
-					System.out.println(this.name + " says : YES I CAN");
+				ReleaseVO release = (ReleaseVO) ((ObjectMessageImpl) message).getObject();
+				System.out.println("Message categorie(s) : " + release.categories);
+
+				if(release.categories.contains(this.categorie)){
+					
+					if(release.available == true){
+						System.out.println(this.name + " says : YES I CAN");
+						//release.available = false;
+					}
+					else{
+						System.out.println(this.name + " says : NO I CAN'T");
+					}
 				}
 				else{
 					System.out.println(this.name + " says : NO I CAN'T");

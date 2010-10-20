@@ -9,7 +9,7 @@ public class EditorVO extends PublishSubscribeComponent{
 	public static CategorieVO categorie;
 	public static String name;
 
-	public EditorVO(String destName, CategorieVO categorie, String name) {
+	public EditorVO(String destName, CategorieVO categorie, String name) throws InterruptedException {
 		super(destName,categorie,name);
 		this.destName = destName;
 		this.categorie = categorie;
