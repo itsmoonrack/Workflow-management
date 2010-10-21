@@ -72,4 +72,8 @@ public abstract class QueueMessageSender extends MessageSender {
 	public void send(Message message) throws JMSException {
 		queueSender.send(message);
 	}
+	
+	public QueueSession getQueueSession() {
+		return session;
+	}
 }

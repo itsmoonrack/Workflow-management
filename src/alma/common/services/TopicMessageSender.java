@@ -74,5 +74,9 @@ public abstract class TopicMessageSender extends MessageSender {
 	public void publish(Message message) throws JMSException {
 		topicPublisher.publish(message);
 	}
+	
+	public TopicSession getTopicSession() {
+		return session;
+	}
 
 }

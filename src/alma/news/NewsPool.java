@@ -1,10 +1,10 @@
 package alma.news;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
+import javax.jms.ObjectMessage;
 
-import alma.common.services.QueueMessageSender;
 import alma.common.vo.NewsVO;
+
 
 /**
  * NewsPool Service.
@@ -21,14 +21,36 @@ import alma.common.vo.NewsVO;
  *
  */
 public class NewsPool implements Runnable {
+	
+	public static void main(String[] args) {
+		NewsPool newsPool = new NewsPool(); // Créer le Service de Nouvelles.
+		Thread newsBean = new Thread(newsPool);
+		
+		newsBean.start();
+	}
+	
+	private IdSender idSender = null;
 
 	public NewsPool() {
+		// Créer un News Sender vers la destination "newsToEditors".
 		
+		// Créer un Id Sender vers la destination "newsToValidate".
+		idSender = new IdSender("newsToValidate");
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
+		NewsVO news = DummyNews.generate(); // Créer un article.
 		
+		ObjectMessage message;
+		try {
+			message = idSender.getQueueSession().createObjectMessage(news);
+			idSender.send(message);
+			
+		} catch (JMSException e) {
+			e.printStackTrace();
+		} finally {
+			idSender.close();
+		}
 	}
 
 }

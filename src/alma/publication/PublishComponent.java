@@ -22,10 +22,8 @@ import alma.common.services.AsyncReceiver;
  */
 public class PublishComponent implements MessageListener, Runnable {
 	
-	private AsyncReceiver receiver = null;
-	
 	public PublishComponent() {
-		receiver = new AsyncReceiver("newsToValidate", this);
+		AsyncReceiver receiver = new AsyncReceiver("newsToValidate", this);
 	}
 
 	public void run() {

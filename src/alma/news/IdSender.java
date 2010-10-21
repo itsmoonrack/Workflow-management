@@ -4,8 +4,8 @@ import alma.common.services.QueueMessageSender;
 
 public class IdSender extends QueueMessageSender {
 
-	public IdSender() {
-		super("newsToValidate");
+	public IdSender(String destination) {
+		super(destination);
 	}
 
 }
