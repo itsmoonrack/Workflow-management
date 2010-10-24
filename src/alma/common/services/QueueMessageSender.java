@@ -16,11 +16,11 @@ import javax.naming.NamingException;
 public class QueueMessageSender extends MessageSender {
 
 	protected QueueSender queueSender = null;
-	
+
 	public QueueMessageSender(String destination) {
 		destName = destination;
 	}
-	
+
 	protected void start() {
 		QueueConnectionFactory factory = null;
 		Queue dest = null;
@@ -40,10 +40,10 @@ public class QueueMessageSender extends MessageSender {
 			// create the session
 			session = ((QueueConnection)connection).createQueueSession(false,
 					Session.AUTO_ACKNOWLEDGE);
-			
+
 			// create the sender
 			queueSender = ((QueueSession)session).createSender(dest);
-			
+
 			// start the connection, to enable message sends
 			connection.start();
 
@@ -53,7 +53,7 @@ public class QueueMessageSender extends MessageSender {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void close() {
 		// close the context
 		if (context != null) {
@@ -73,18 +73,28 @@ public class QueueMessageSender extends MessageSender {
 			}
 		}
 	}
-	
+
 	public void sendObjectMessage(Serializable obj) throws JMSException {
-		start();
-		Message message = session.createObjectMessage(obj);
-		queueSender.send(message);
-		close();
+		try {
+			start();
+			Message message = session.createObjectMessage(obj);
+			queueSender.send(message);
+		} catch (JMSException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
 	}
-	
+
 	public void sendTextMessage(String text) throws JMSException {
-		start();
-		Message message = session.createTextMessage(text);
-		queueSender.send(message);
-		close();
+		try {
+			start();
+			Message message = session.createTextMessage(text);
+			queueSender.send(message);
+		} catch (JMSException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
 	}
 }

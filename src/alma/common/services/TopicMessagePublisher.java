@@ -76,9 +76,16 @@ public class TopicMessagePublisher extends MessageSender {
 		}
 	}
 	
-	public void publishObject(Serializable obj) throws JMSException {
-		Message message = session.createObjectMessage(obj);
-		topicPublisher.publish(message);
+	public void publishObject(Serializable obj) {
+		try {
+			start();
+			Message message = session.createObjectMessage(obj);
+			topicPublisher.publish(message);
+		} catch (JMSException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
 	}
 
 }

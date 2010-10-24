@@ -49,7 +49,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 				
 				//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 				//afin que les editeurs se connectent dessus et la récupère.
-				TopicMessagePublisher newsPublisher = new TopicMessagePublisher("newsToEdit");
+				TopicMessagePublisher newsPublisher = new TopicMessagePublisher("editorsTopic");
 				newsPublisher.publishObject(news);
 			}
 			
