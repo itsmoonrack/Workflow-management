@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -83,10 +84,20 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 		for (NewsVO news : pressDispatch.values()) {
 			toEditors.publishObject(news);
 		}
-		if (!pressRelease.isEmpty()) {
+		if (!pressRelease.isEmpty()) { //S'il y a des nouvelles dans la release.
 			System.out.println("Il reste " + pressDispatch.size() + " nouvelles en attente de révision.");
-			if (pressDispatch.isEmpty()) {
-//				toEditorInChief.sendObjectMessage(obj)
+			
+			if (pressDispatch.isEmpty()) { //S'il ne reste plus de nouvelles à traiter.
+				System.out.println("Envoi de la release à l'éditeur en chef.");
+				
+				for (NewsVO news : pressRelease.values()) {
+					try {
+						toEditorInChief.sendObjectMessage(news);
+						pressRelease.remove(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
+					} catch (JMSException e) {
+						
+					}	
+				}
 			}
 		}
 	}

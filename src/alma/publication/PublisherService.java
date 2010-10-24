@@ -56,7 +56,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 					listAuthorizedId.add(id);
 				}
 				
-				if (((ObjectMessageImpl) message).getObject().getClass().getName().equals("alma.common.vo.NewsVO")){
+				if (((ObjectMessageImpl) message).getObject().getClass().getName().equals("alma.common.models.vo.NewsVO")){
 					
 					NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
 					
