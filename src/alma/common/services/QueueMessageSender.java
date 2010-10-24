@@ -1,5 +1,7 @@
 package alma.common.services;
 
+import java.io.Serializable;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
@@ -11,12 +13,15 @@ import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public abstract class QueueMessageSender extends MessageSender {
+public class QueueMessageSender extends MessageSender {
 
-	protected QueueSession session = null;
 	protected QueueSender queueSender = null;
 	
 	public QueueMessageSender(String destination) {
+		destName = destination;
+	}
+	
+	protected void start() {
 		QueueConnectionFactory factory = null;
 		Queue dest = null;
 		try {
@@ -27,7 +32,7 @@ public abstract class QueueMessageSender extends MessageSender {
 			factory = (QueueConnectionFactory) context.lookup(factoryName);
 
 			// look up the Destination
-			dest = (Queue) context.lookup(destination);
+			dest = (Queue) context.lookup(destName);
 
 			// create the connection
 			connection = factory.createQueueConnection();
@@ -37,7 +42,7 @@ public abstract class QueueMessageSender extends MessageSender {
 					Session.AUTO_ACKNOWLEDGE);
 			
 			// create the sender
-			queueSender = session.createSender(dest);
+			queueSender = ((QueueSession)session).createSender(dest);
 			
 			// start the connection, to enable message sends
 			connection.start();
@@ -49,7 +54,7 @@ public abstract class QueueMessageSender extends MessageSender {
 		}
 	}
 	
-	public void close() {
+	protected void close() {
 		// close the context
 		if (context != null) {
 			try {
@@ -69,11 +74,17 @@ public abstract class QueueMessageSender extends MessageSender {
 		}
 	}
 	
-	public void send(Message message) throws JMSException {
+	public void sendObjectMessage(Serializable obj) throws JMSException {
+		start();
+		Message message = session.createObjectMessage(obj);
 		queueSender.send(message);
+		close();
 	}
 	
-	public QueueSession getQueueSession() {
-		return session;
+	public void sendTextMessage(String text) throws JMSException {
+		start();
+		Message message = session.createTextMessage(text);
+		queueSender.send(message);
+		close();
 	}
 }

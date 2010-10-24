@@ -16,22 +16,27 @@ import javax.naming.NamingException;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.models.vo.CategorieVO;
-import alma.common.models.vo.ReleaseVO;
+import alma.common.models.vo.NewsVO;
 
-public class MessageReceiver implements Runnable, MessageListener {
+public class TopicSessionMessageReceiver implements MessageListener {
 
-	public static String destName;
+	public String destination;
+	public CategorieVO categorie;
+	public String name;
 
-	public MessageReceiver() {
+	public TopicSessionMessageReceiver() {
 
 	}
-	
-	public MessageReceiver(String destination) {
-		destName = destination;
+
+	public TopicSessionMessageReceiver(String destName, CategorieVO categorie,
+			String name) {
+		this.destination = destName;
+		this.categorie = categorie;
+		this.name = name;
 	}
-	
+
 	public void run() {
-		
+
 		Context context = null;
 		TopicConnectionFactory topicConnectionFactory = null;
 		TopicConnection topicConnection = null;
@@ -42,6 +47,7 @@ public class MessageReceiver implements Runnable, MessageListener {
 		TopicSubscriber topicSubscriber = null;
 
 		try {
+
 			// create the JNDI initial context
 			context = new InitialContext();
 
@@ -50,7 +56,7 @@ public class MessageReceiver implements Runnable, MessageListener {
 					.lookup(factoryName);
 
 			// look up the Destination
-			topic = (Topic) context.lookup(destName);
+			topic = (Topic) context.lookup(destination);
 
 			// create the connection
 			topicConnection = topicConnectionFactory.createTopicConnection();
@@ -66,8 +72,8 @@ public class MessageReceiver implements Runnable, MessageListener {
 
 			// start the connection, to enable message receipt
 			topicConnection.start();
-
-			while (true);
+			
+			while(true);
 
 		} catch (JMSException exception) {
 			exception.printStackTrace();
@@ -87,6 +93,8 @@ public class MessageReceiver implements Runnable, MessageListener {
 			if (topicConnection != null) {
 				try {
 					topicConnection.close();
+					System.out
+							.println("Connection to the topic (receiver) closed");
 				} catch (JMSException exception) {
 					exception.printStackTrace();
 				}
@@ -97,29 +105,27 @@ public class MessageReceiver implements Runnable, MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		try {
-			if(message instanceof ObjectMessageImpl){
 
-				ReleaseVO release = (ReleaseVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Message categorie(s) : " + release.categories);
+			if (message instanceof ObjectMessageImpl) {
 
-				if(release.categories.contains(this.categorie)){
-					
-					if(release.available == true){
-						System.out.println(this.name + " says : YES I CAN");
-						//release.available = false;
-					}
-					else{
-						System.out.println(this.name + " says : NO I CAN'T");
-					}
-				}
-				else{
-					System.out.println(this.name + " says : NO I CAN'T");
+				NewsVO news = (NewsVO) ((ObjectMessageImpl) message)
+						.getObject();
+
+				if (news.categories.contains(this.categorie)) {
+					System.out.println("--------------------------------------");
+					System.out.println(this.name + " can edited the news");
+					this.treat(news);
+					System.out.println("--------------------------------------");
+				} else {
+					System.out.println("--------------------------------------");
+					System.out.println(this.name + " can't edited the news");
+					System.out.println("--------------------------------------");
 				}
 			}
-			
+ 
 		} catch (Throwable t) {
 			System.out.println("Exception in onMessage():" + t.getMessage());
 		}
-		
 	}
+	public void treat(NewsVO news){}
 }

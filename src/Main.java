@@ -1,8 +1,8 @@
-import alma.common.vo.CategorieVO;
-import alma.common.vo.EditorVO;
-import alma.common.vo.NewsVO;
-import alma.common.vo.ReleaseVO;
-import alma.news.NewsPool;
+import alma.common.models.vo.CategorieVO;
+import alma.common.models.vo.EditorVO;
+import alma.common.models.vo.NewsVO;
+import alma.common.models.vo.ReleaseVO;
+import alma.news.NewsPoolService;
 
 
 public class Main {
@@ -25,7 +25,7 @@ public class Main {
 		EditorVO JC = new EditorVO("topic1", CategorieVO.CULTURE, "JC");
 		
 		//The NewsPool sends the release in the topic
-		NewsPool newsPool = new NewsPool("topic1");
+		NewsPoolService newsPool = new NewsPoolService("topic1");
 		newsPool.send(release1);
 	}
 }

@@ -1,5 +1,7 @@
 package alma.common.services;
 
+import java.io.Serializable;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -11,12 +13,15 @@ import javax.jms.TopicSession;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public abstract class TopicMessageSender extends MessageSender {
+public class TopicMessagePublisher extends MessageSender {
 	
-	protected TopicSession session = null;
 	protected TopicPublisher topicPublisher = null;
 
-	public TopicMessageSender(String destination) {
+	public TopicMessagePublisher(String destination) {
+		destName = destination;
+	}
+	
+	protected void start() {
 		TopicConnectionFactory factory = null;
 		Topic dest = null;
 		
@@ -29,7 +34,7 @@ public abstract class TopicMessageSender extends MessageSender {
 			factory = (TopicConnectionFactory) context.lookup(factoryName);
 
 			// look up the Destination
-			dest = (Topic) context.lookup(destination);
+			dest = (Topic) context.lookup(destName);
 
 			// create the connection
 			connection = factory.createTopicConnection();
@@ -39,7 +44,7 @@ public abstract class TopicMessageSender extends MessageSender {
 					Session.AUTO_ACKNOWLEDGE);
 			
 			// create the sender
-			topicPublisher = session.createPublisher(dest);
+			topicPublisher = ((TopicSession)session).createPublisher(dest);
 			
 			// start the connection, to enable message sends
 			connection.start();
@@ -51,7 +56,7 @@ public abstract class TopicMessageSender extends MessageSender {
 		}
 	}
 	
-	public void close() {
+	protected void close() {
 		// close the context
 		if (context != null) {
 			try {
@@ -71,12 +76,9 @@ public abstract class TopicMessageSender extends MessageSender {
 		}
 	}
 	
-	public void publish(Message message) throws JMSException {
+	public void publishObject(Serializable obj) throws JMSException {
+		Message message = session.createObjectMessage(obj);
 		topicPublisher.publish(message);
-	}
-	
-	public TopicSession getTopicSession() {
-		return session;
 	}
 
 }

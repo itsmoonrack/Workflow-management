@@ -3,21 +3,18 @@ package alma.common.vo;
 import java.io.Serializable;
 import java.util.Vector;
 
-
 /**
  * Class Release
  *
  */
+@SuppressWarnings("serial")
 public class ReleaseVO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	public final long serialVersionUID = 1L;
 	
-	public static int id;
+	public int id;
 	public Vector<CategorieVO> categories = new Vector<CategorieVO>();
 	public Vector<NewsVO> listNews = new Vector<NewsVO>();
-	
-	//A release can only edited by only one editor
-	public boolean available = true;
 	
 	/**
 	 * Constructor for Release

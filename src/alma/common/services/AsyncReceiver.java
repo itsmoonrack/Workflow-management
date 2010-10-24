@@ -27,7 +27,7 @@ public class AsyncReceiver {
 		messageListener = listener;
 	}
 
-	public void setup() {
+	public void start() {
 		ConnectionFactory factory = null;
 		String factoryName = "ConnectionFactory";
 		Destination dest = null;
