@@ -1,5 +1,7 @@
 package alma.news;
 
+import java.util.logging.Level;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -46,7 +48,7 @@ public class NewsPoolService extends StatefulBean implements MessageListener {
 		receiver = new AsyncReceiver("newsPoolQueue", this);
 
 		start();
-		System.out.println("Service de NewsPool lancé.");
+		logger.log(Level.INFO, "Service de NewsPool lancé.");
 	}
 
 	//Fonction déclenchée lors de la réception d'une nouvelle sur la queue "newsPool".
@@ -58,16 +60,16 @@ public class NewsPoolService extends StatefulBean implements MessageListener {
 
 				news.id = uniqueId++; //Attribut une id unique au système.
 			    
-				System.out.println("Nouvelle reçue en provenance de: " + news.author + ", titre: " + news.title + ", sujets concernés: " + news.categories);
+				logger.log(Level.INFO, "Nouvelle reçue en provenance de: " + news.author + ", titre: " + news.title + ", sujets concernés: " + news.categories);
 				
 				idSender.sendTextMessage(String.valueOf(news.id));
 				newsSender.sendObjectMessage(news);
 			} else {
-				System.out.println("Message wrong type: " + 
+				logger.log(Level.INFO, "Message wrong type: " + 
 						m.getClass().getName());
 			}
 		} catch (Throwable t) {
-			System.out.println("Exception in onMessage():" + t.getMessage());
+			logger.log(Level.WARNING, "Exception in onMessage():" + t.getMessage());
 		}
 	}
 

@@ -1,6 +1,7 @@
 package alma.publication;
 
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -28,6 +29,10 @@ import alma.common.services.AsyncReceiver;
  */
 public class PublisherService extends StatefulBean implements MessageListener {
 	
+	public static void main(String[] args) {
+		new PublisherService(); //Créer le service de publication.
+	}
+	
 	private Vector<Integer> listAuthorizedId;
 	private Vector<NewsVO> listNews;
 	
@@ -35,7 +40,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 		receiver = new AsyncReceiver("newsToValidateQueue", this);
 		
 		start();
-		System.out.println("Service de publication lancé.");
+		logger.log(Level.INFO, "Service de publication lancé.");
 	}
 
 	public void onMessage(Message message) {
@@ -45,7 +50,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 				if (((ObjectMessageImpl) message).getObject().getClass().getName().equals("java.lang.Integer")){
 				
 					int id = (Integer) ((ObjectMessageImpl) message).getObject();
-					System.out.println("The editor in chief has received an ID : " + id);
+					logger.log(Level.INFO, "The editor in chief has received an ID : " + id);
 					
 					//We save the ID in the list
 					listAuthorizedId.add(id);
@@ -56,7 +61,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 					NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
 					
 					if (listAuthorizedId.contains(news.id)) {
-						System.out.println("The editor in chief has received a news, id : " + news.id);
+						logger.log(Level.INFO, "The editor in chief has received a news, id : " + news.id);
 						
 						//We save the new news in the list
 						listNews.add(news);
@@ -65,7 +70,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 			}
 			
 		} catch (Throwable t) {
-			System.out.println("Exception in onMessage():" + t.getMessage());
+			logger.log(Level.WARNING, "Exception in onMessage():" + t.getMessage());
 		}
 	}
 

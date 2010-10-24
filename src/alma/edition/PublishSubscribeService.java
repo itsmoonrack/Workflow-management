@@ -1,8 +1,11 @@
 package alma.edition;
 
+import java.util.logging.Level;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.apache.log4j.Logger;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.models.StatefulBean;
@@ -33,7 +36,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 		receiver = new AsyncReceiver("newsToEditQueue", this);
 		
 		start();
-		System.out.println("Service d'édition lancé.");
+		logger.log(Level.INFO, "Service d'édition lancé.");
 	}
 
 	public void onMessage(Message message) {
@@ -41,7 +44,8 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			if(message instanceof ObjectMessageImpl){
 
 				NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
+				logger.log(Level.INFO, "Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
+//				System.out.println();
 				
 				//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 				//afin que les editeurs se connectent dessus et la récupère.
@@ -50,7 +54,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			}
 			
 		} catch (Throwable t) {
-			System.out.println("Exception in onMessage():" + t.getMessage());
+			logger.log(Level.WARNING, "Exception in onMessage():" + t.getMessage());
 		}
 	}
 	
