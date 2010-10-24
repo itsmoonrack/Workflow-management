@@ -33,11 +33,14 @@ public class PublisherService extends StatefulBean implements MessageListener {
 		new PublisherService(); //Créer le service de publication.
 	}
 	
+	private AsyncReceiver secureReceiver;
 	private Vector<Integer> listAuthorizedId;
 	private Vector<NewsVO> listNews;
 	
 	public PublisherService() {
-		receiver = new AsyncReceiver("newsToValidateQueue", this);
+		receiver = new AsyncReceiver("newsToPublishQueue", this);
+		secureReceiver = new AsyncReceiver("newsToValidateQueue", this);
+		secureReceiver.start();
 		
 		start();
 		System.out.println("Service de publication lancé.");
