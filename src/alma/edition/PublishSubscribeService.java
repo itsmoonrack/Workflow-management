@@ -47,14 +47,14 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 
 				NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
 				
-				if (news.state == State.IDENTIFIED) {
+				if (news.state == State.DISPATCHED) {
 					logger.log(Level.INFO, "Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
 					
 					//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 					//afin que les editeurs se connectent dessus et la récupère.
 					TopicMessagePublisher toEditors = new TopicMessagePublisher("editorsTopic");
 					toEditors.publishObject(news);
-				} else if (news.state == State.EDIT_VALIDATED) {
+				} else if (news.state == State.RELEASED) {
 					logger.log(Level.INFO, "Nouvelle reçue en provenance d'un editeur, id: " + news.id);
 					
 					//La nouvelle corrigée par un editeur est envoyé à l'éditeur en chef.
