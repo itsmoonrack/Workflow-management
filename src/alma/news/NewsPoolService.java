@@ -1,17 +1,14 @@
 package alma.news;
 
 import javax.jms.Message;
-import javax.jms.MessageFormatException;
 import javax.jms.MessageListener;
 
-import org.apache.derby.iapi.util.StringUtil;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.models.StatefulBean;
 import alma.common.models.vo.NewsVO;
 import alma.common.services.AsyncReceiver;
 import alma.common.services.QueueMessageSender;
-import antlr.StringUtils;
 
 
 /**
@@ -31,7 +28,7 @@ import antlr.StringUtils;
 public class NewsPoolService extends StatefulBean implements MessageListener {
 
 	public static void main(String[] args) {
-		NewsPoolService newsPool = new NewsPoolService(); // Créer le Service de Nouvelles.
+		new NewsPoolService(); // Créer le Service de Nouvelles.
 	}
 
 	private static int uniqueId = 0;
@@ -45,7 +42,7 @@ public class NewsPoolService extends StatefulBean implements MessageListener {
 		//Créer un Id Sender vers la destination "newsToValidateQueue".
 		idSender = new QueueMessageSender("newsToValidateQueue");
 
-		//Configure un AsyncReceiver anonyme et lui passe en référence l'objet.
+		//Configure un AsyncReceiver et lui passe en référence l'objet.
 		receiver = new AsyncReceiver("newsPoolQueue", this);
 
 		start();
@@ -61,7 +58,7 @@ public class NewsPoolService extends StatefulBean implements MessageListener {
 
 				news.id = uniqueId++; //Attribut une id unique au système.
 			    
-				System.out.println("Nouvelle reçue: " + news);
+				System.out.println("Nouvelle reçue en provenance de: " + news.author + ", titre: " + news.title + ", sujets concernés: " + news.categories);
 				
 				idSender.sendTextMessage(String.valueOf(news.id));
 				newsSender.sendObjectMessage(news);

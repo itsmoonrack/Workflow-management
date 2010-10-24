@@ -95,31 +95,36 @@ public class MessageReceiver implements Runnable, MessageListener {
 	}
 
 	@Override
-	public void onMessage(Message message) {
-		try {
-			if(message instanceof ObjectMessageImpl){
-
-				ReleaseVO release = (ReleaseVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("Message categorie(s) : " + release.categories);
-
-				if(release.categories.contains(this.categorie)){
-					
-					if(release.available == true){
-						System.out.println(this.name + " says : YES I CAN");
-						//release.available = false;
-					}
-					else{
-						System.out.println(this.name + " says : NO I CAN'T");
-					}
-				}
-				else{
-					System.out.println(this.name + " says : NO I CAN'T");
-				}
-			}
-			
-		} catch (Throwable t) {
-			System.out.println("Exception in onMessage():" + t.getMessage());
-		}
+	public void onMessage(Message arg0) {
+		// TODO Auto-generated method stub
 		
 	}
+
+//	public void onMessage(Message message) {
+//		try {
+//			if(message instanceof ObjectMessageImpl){
+//
+//				ReleaseVO release = (ReleaseVO) ((ObjectMessageImpl) message).getObject();
+//				System.out.println("Message categorie(s) : " + release.categories);
+//
+//				if(release.categories.contains(this.categorie)){
+//					
+//					if(release.available == true){
+//						System.out.println(this.name + " says : YES I CAN");
+//						//release.available = false;
+//					}
+//					else{
+//						System.out.println(this.name + " says : NO I CAN'T");
+//					}
+//				}
+//				else{
+//					System.out.println(this.name + " says : NO I CAN'T");
+//				}
+//			}
+//			
+//		} catch (Throwable t) {
+//			System.out.println("Exception in onMessage():" + t.getMessage());
+//		}
+//		
+//	}
 }

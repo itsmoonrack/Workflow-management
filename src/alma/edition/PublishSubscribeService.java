@@ -41,8 +41,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			if(message instanceof ObjectMessageImpl){
 
 				NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
-				System.out.println("A news was arrived, id : " + news.id
-						+ " , categorie(s) : " + news.categories);
+				System.out.println("Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
 				
 				//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 				//afin que les editeurs se connectent dessus et la récupère.
