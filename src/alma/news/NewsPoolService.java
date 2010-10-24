@@ -7,6 +7,7 @@ import javax.jms.MessageListener;
 
 import org.exolab.jms.message.ObjectMessageImpl;
 
+import alma.common.models.State;
 import alma.common.models.StatefulBean;
 import alma.common.models.vo.NewsVO;
 import alma.common.services.AsyncReceiver;
@@ -48,28 +49,30 @@ public class NewsPoolService extends StatefulBean implements MessageListener {
 		receiver = new AsyncReceiver("newsPoolQueue", this);
 
 		start();
-		logger.log(Level.INFO, "Service de NewsPool lancé.");
+		System.out.println("Service de NewsPool lancé.");
 	}
 
-	//Fonction déclenchée lors de la réception d'une nouvelle sur la queue "newsPool".
+	//Fonction déclenchée lors de la réception d'une nouvelle sur la queue "newsPoolQueue".
 	public void onMessage(Message m) {
 		try {
 			if (m instanceof ObjectMessageImpl) {
 				ObjectMessageImpl message = (ObjectMessageImpl)m;
 				NewsVO news = (NewsVO) message.getObject();
-
-				news.id = uniqueId++; //Attribut une id unique au système.
-			    
-				logger.log(Level.INFO, "Nouvelle reçue en provenance de: " + news.author + ", titre: " + news.title + ", sujets concernés: " + news.categories);
 				
+				System.out.println("Nouvelle reçue en provenance de: " + news.author + ", titre: " + news.title + ", sujets concernés: " + news.categories);
+				System.out.println("Status: " + news.state + " -> " + State.DISPATCHED);
+				
+				news.id = uniqueId++; //Attribut une id unique au système.
+			    news.state = State.DISPATCHED; //Workflow: c'est un "press dispatch".
+			    
 				idSender.sendTextMessage(String.valueOf(news.id));
 				newsSender.sendObjectMessage(news);
 			} else {
-				logger.log(Level.INFO, "Message wrong type: " + 
+				System.out.println("Message wrong type: " + 
 						m.getClass().getName());
 			}
 		} catch (Throwable t) {
-			logger.log(Level.WARNING, "Exception in onMessage():" + t.getMessage());
+			System.out.println("Exception in onMessage():" + t.getMessage());
 		}
 	}
 

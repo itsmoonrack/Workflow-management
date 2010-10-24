@@ -40,7 +40,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 		receiver = new AsyncReceiver("newsToValidateQueue", this);
 		
 		start();
-		logger.log(Level.INFO, "Service de publication lancé.");
+		System.out.println("Service de publication lancé.");
 	}
 
 	public void onMessage(Message message) {
@@ -50,7 +50,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 				if (((ObjectMessageImpl) message).getObject().getClass().getName().equals("java.lang.Integer")){
 				
 					int id = (Integer) ((ObjectMessageImpl) message).getObject();
-					logger.log(Level.INFO, "The editor in chief has received an ID : " + id);
+					System.out.println("The editor in chief has received an ID : " + id);
 					
 					//We save the ID in the list
 					listAuthorizedId.add(id);
@@ -61,7 +61,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 					NewsVO news = (NewsVO) ((ObjectMessageImpl) message).getObject();
 					
 					if (listAuthorizedId.contains(news.id)) {
-						logger.log(Level.INFO, "The editor in chief has received a news, id : " + news.id);
+						System.out.println("The editor in chief has received a news, id : " + news.id);
 						
 						//We save the new news in the list
 						listNews.add(news);
@@ -70,7 +70,7 @@ public class PublisherService extends StatefulBean implements MessageListener {
 			}
 			
 		} catch (Throwable t) {
-			logger.log(Level.WARNING, "Exception in onMessage():" + t.getMessage());
+			System.out.println("Exception in onMessage():" + t.getMessage());
 		}
 	}
 
