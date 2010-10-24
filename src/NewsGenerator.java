@@ -1,9 +1,8 @@
-package alma.news;
-
 import javax.jms.JMSException;
 
 import alma.common.models.vo.NewsVO;
 import alma.common.services.QueueMessageSender;
+import alma.news.DummyNews;
 
 public class NewsGenerator {
 	

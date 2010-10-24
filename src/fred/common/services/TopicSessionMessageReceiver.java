@@ -15,20 +15,20 @@ import javax.naming.NamingException;
 
 import org.exolab.jms.message.ObjectMessageImpl;
 
-import alma.common.models.vo.CategorieVO;
+import alma.common.models.Categorie;
 import alma.common.models.vo.NewsVO;
 
 public class TopicSessionMessageReceiver implements MessageListener {
 
 	public String destination;
-	public CategorieVO categorie;
+	public Categorie categorie;
 	public String name;
 
 	public TopicSessionMessageReceiver() {
 
 	}
 
-	public TopicSessionMessageReceiver(String destName, CategorieVO categorie,
+	public TopicSessionMessageReceiver(String destName, Categorie categorie,
 			String name) {
 		this.destination = destName;
 		this.categorie = categorie;

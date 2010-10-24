@@ -2,7 +2,7 @@ package alma.news;
 
 import java.util.Vector;
 
-import alma.common.models.vo.CategorieVO;
+import alma.common.models.Categorie;
 import alma.common.models.vo.NewsVO;
 import alma.common.services.QueueSessionMessageSender;
 
@@ -31,13 +31,13 @@ public class NewsPool extends QueueSessionMessageSender {
 		this.destination2 = destination2;
 	}
 	
-	public void createNews(int id, String title, CategorieVO categorie){
+	public void createNews(int id, String title, Categorie categorie){
 		NewsVO news = new NewsVO(id, title, categorie);
 		this.listNews.add(news);
 		
 	}
 	
-	public void createNews(String title, CategorieVO categorie){
+	public void createNews(String title, Categorie categorie){
 		NewsVO news = new NewsVO(title, categorie);
 		this.listNews.add(news);
 		

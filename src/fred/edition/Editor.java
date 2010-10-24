@@ -1,6 +1,6 @@
 package alma.edition;
 
-import alma.common.models.vo.CategorieVO;
+import alma.common.models.Categorie;
 import alma.common.models.vo.NewsVO;
 import alma.common.services.TopicSessionMessageReceiver;
 
@@ -9,12 +9,12 @@ public class Editor extends TopicSessionMessageReceiver implements Runnable {
 
 	public String destName;
 	public String destName2;
-	public CategorieVO categorie;
+	public Categorie categorie;
 	public String name;
 	public NewsVO news;
 	public boolean available;
 
-	public Editor(String destName, String destName2, CategorieVO categorie, String name) throws InterruptedException {
+	public Editor(String destName, String destName2, Categorie categorie, String name) throws InterruptedException {
 		super(destName,categorie,name);
 		this.destName = destName;
 		this.destName2 = destName2;

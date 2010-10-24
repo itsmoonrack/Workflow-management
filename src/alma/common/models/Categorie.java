@@ -1,6 +1,6 @@
-package alma.common.models.vo;
+package alma.common.models;
 
-public enum CategorieVO {
+public enum Categorie {
 	POLITIQUE,
 	ECONOMIE,
 	SANTE,

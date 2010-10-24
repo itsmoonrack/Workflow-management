@@ -1,5 +1,5 @@
 package alma.edition;
 
-public class Editors {
+public class Editor {
 
 }

@@ -15,7 +15,7 @@ import javax.naming.NamingException;
 
 import org.exolab.jms.message.ObjectMessageImpl;
 
-import alma.common.models.vo.CategorieVO;
+import alma.common.models.Categorie;
 import alma.common.models.vo.ReleaseVO;
 
 public class MessageReceiver implements Runnable, MessageListener {
