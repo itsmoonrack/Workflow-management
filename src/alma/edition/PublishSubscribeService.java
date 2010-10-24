@@ -1,11 +1,15 @@
 package alma.edition;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
+import org.apache.xerces.impl.xs.identity.ValueStore;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.models.State;
@@ -30,6 +34,12 @@ import alma.common.services.TopicMessagePublisher;
  */
 public class PublishSubscribeService extends StatefulBean implements MessageListener {
 
+	private Map<Integer, NewsVO> pressDispatch = new HashMap<Integer, NewsVO>();
+	private Map<Integer, NewsVO> pressRelease = new HashMap<Integer, NewsVO>();
+	
+	private TopicMessagePublisher toEditors = new TopicMessagePublisher("editorsTopic");
+	private QueueMessageSender toEditorInChief = new QueueMessageSender("newsToPublishQueue");
+	
 	public static void main(String[] args) {
 		new PublishSubscribeService(); // Créer le service d'édition.
 	}
@@ -49,22 +59,35 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 
 				if (news.state == State.DISPATCHED) {
 					System.out.println("Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
-
+					pressDispatch.put(news.id, news);
+					
 					//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 					//afin que les editeurs se connectent dessus et la récupère.
-					TopicMessagePublisher toEditors = new TopicMessagePublisher("editorsTopic");
 					toEditors.publishObject(news);
 				} else if (news.state == State.RELEASED) {
 					System.out.println("Nouvelle reçue en provenance d'un editeur, id: " + news.id);
-
+					pressDispatch.remove(news.id);
+					pressRelease.put(news.id, news);
+					
 					//La nouvelle corrigée par un editeur est envoyé à l'éditeur en chef.
-					QueueMessageSender toEditorInChief = new QueueMessageSender("newsToPublishQueue");
-					toEditorInChief.sendObjectMessage(news);
+//					toEditorInChief.sendObjectMessage(news);
 				}
 			}
 
 		} catch (Throwable t) {
 			System.out.println("Exception in onMessage():" + t.getMessage());
+		}
+	}
+	
+	protected void tick() {
+		for (NewsVO news : pressDispatch.values()) {
+			toEditors.publishObject(news);
+		}
+		if (!pressRelease.isEmpty()) {
+			System.out.println("Il reste " + pressDispatch.size() + " nouvelles en attente de révision.");
+			if (pressDispatch.isEmpty()) {
+//				toEditorInChief.sendObjectMessage(obj)
+			}
 		}
 	}
 
