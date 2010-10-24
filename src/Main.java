@@ -27,5 +27,7 @@ public class Main {
 		//The NewsPool sends the release in the topic
 		NewsPoolService newsPool = new NewsPoolService("topic1");
 		newsPool.send(release1);
+		
+		// Push
 	}
 }
