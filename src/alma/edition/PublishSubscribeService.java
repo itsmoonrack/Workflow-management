@@ -1,5 +1,6 @@
 package alma.edition;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -37,10 +38,10 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 
 	private Map<Integer, NewsVO> pressDispatch = new HashMap<Integer, NewsVO>();
 	private Map<Integer, NewsVO> pressRelease = new HashMap<Integer, NewsVO>();
-	
+
 	private TopicMessagePublisher toEditors = new TopicMessagePublisher("editorsTopic");
 	private QueueMessageSender toEditorInChief = new QueueMessageSender("newsToPublishQueue");
-	
+
 	public static void main(String[] args) {
 		new PublishSubscribeService(); // Créer le service d'édition.
 	}
@@ -61,7 +62,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 				if (news.state == State.DISPATCHED) {
 					System.out.println("Nouvelle reçue en provenance de NewsPoolService, id: " + news.id + ", sujets concernés: " + news.categories);
 					pressDispatch.put(news.id, news);
-					
+
 					//Après la réception d'une nouvelle, nous l'envoyons sur un topic
 					//afin que les editeurs se connectent dessus et la récupère.
 					toEditors.publishObject(news);
@@ -69,9 +70,9 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 					System.out.println("Nouvelle reçue en provenance d'un editeur, id: " + news.id);
 					pressDispatch.remove(news.id);
 					pressRelease.put(news.id, news);
-					
+
 					//La nouvelle corrigée par un editeur est envoyé à l'éditeur en chef.
-//					toEditorInChief.sendObjectMessage(news);
+					//					toEditorInChief.sendObjectMessage(news);
 				}
 			}
 
@@ -79,24 +80,35 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			System.out.println("Exception in onMessage():" + t.getMessage());
 		}
 	}
-	
+
 	protected void tick() {
-		for (NewsVO news : pressDispatch.values()) {
-			toEditors.publishObject(news);
+
+		Collection<NewsVO> dispatch = pressDispatch.values();
+		for (NewsVO news : dispatch) {
+			NewsVO clone = new NewsVO(news); //Empêche les java.util.ConcurrentModificationException
+			toEditors.publishObject(clone);
 		}
+
 		if (!pressRelease.isEmpty()) { //S'il y a des nouvelles dans la release.
 			System.out.println("Il reste " + pressDispatch.size() + " nouvelles en attente de révision.");
-			
+
 			if (pressDispatch.isEmpty()) { //S'il ne reste plus de nouvelles à traiter.
 				System.out.println("Envoi de la release à l'éditeur en chef.");
-				
-				for (NewsVO news : pressRelease.values()) {
-					try {
-						toEditorInChief.sendObjectMessage(news);
-						pressRelease.remove(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
-					} catch (JMSException e) {
-						
-					}	
+				Vector<Integer> toRemove = new Vector<Integer>();
+
+				try {
+					Collection<NewsVO> release = pressRelease.values();
+					for (NewsVO news : release) {
+						NewsVO clone = new NewsVO(news); //Empêche les java.util.ConcurrentModificationException
+						toEditorInChief.sendObjectMessage(clone);
+						toRemove.add(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
+					}
+				} catch (JMSException e) {
+
+				} finally {
+					for (Integer integer : toRemove) {
+						pressRelease.remove(integer);
+					}
 				}
 			}
 		}
