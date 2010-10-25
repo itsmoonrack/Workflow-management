@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -80,7 +81,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 
 	protected synchronized void tick() {
 		for (NewsVO news : pressDispatch.values()) {
-			toEditors.publishObject(news);
+			toEditors.publishObject(news.getData());
 		}
 
 		if (!pressRelease.isEmpty()) { //S'il y a des nouvelles dans la release.
@@ -89,14 +90,19 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			if (pressDispatch.isEmpty()) { //S'il ne reste plus de nouvelles à traiter.
 				System.out.println("Envoi de la release à l'éditeur en chef.");
 
+				Vector<Integer> toRemove = new Vector<Integer>();
 				try {
 					for (NewsVO news : pressRelease.values()) {
-						toEditorInChief.sendObjectMessage(news);
-						pressRelease.remove(news.id);
+						toEditorInChief.sendObjectMessage(news.getData());
+						toRemove.add(news.id);
 					}
 				} catch (JMSException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} finally {
+					for (Integer id : toRemove) {
+						pressRelease.remove(id);
+					}
 				}
 			}
 		}
