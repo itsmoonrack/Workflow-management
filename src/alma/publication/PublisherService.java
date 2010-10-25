@@ -8,6 +8,7 @@ import javax.jms.MessageListener;
 
 import org.exolab.jms.message.ObjectMessageImpl;
 
+import alma.common.models.State;
 import alma.common.models.StatefulBean;
 import alma.common.models.vo.NewsVO;
 import alma.common.services.AsyncReceiver;
@@ -65,8 +66,10 @@ public class PublisherService extends StatefulBean implements MessageListener {
 					
 					if (listAuthorizedId.contains(news.id)) {
 						System.out.println("The editor in chief has received a news, id : " + news.id);
+						System.out.println("Status: " + news.state + " -> " + State.PUBLISHED);
 						
 						//We save the new news in the list
+						news.state = State.PUBLISHED;
 						listNews.add(news);
 					}
 				} 

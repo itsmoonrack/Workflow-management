@@ -1,17 +1,14 @@
 package alma.edition;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
-import java.util.logging.Level;
+import java.util.Map.Entry;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.log4j.Logger;
-import org.apache.xerces.impl.xs.identity.ValueStore;
 import org.exolab.jms.message.ObjectMessageImpl;
 
 import alma.common.models.State;
@@ -82,32 +79,31 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 	}
 
 	protected void tick() {
-
-		Collection<NewsVO> dispatch = pressDispatch.values();
-		for (NewsVO news : dispatch) {
-			NewsVO clone = new NewsVO(news); //Empêche les java.util.ConcurrentModificationException
-			toEditors.publishObject(clone);
+		//To avoid java.util.ConcurrentModificationException
+		Iterator<Entry<Integer, NewsVO>> it = pressDispatch.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Integer, NewsVO> pairs = it.next();
+			NewsVO news = pairs.getValue();
+			toEditors.publishObject(news);
 		}
+
 
 		if (!pressRelease.isEmpty()) { //S'il y a des nouvelles dans la release.
 			System.out.println("Il reste " + pressDispatch.size() + " nouvelles en attente de révision.");
 
 			if (pressDispatch.isEmpty()) { //S'il ne reste plus de nouvelles à traiter.
 				System.out.println("Envoi de la release à l'éditeur en chef.");
-				Vector<Integer> toRemove = new Vector<Integer>();
 
-				try {
-					Collection<NewsVO> release = pressRelease.values();
-					for (NewsVO news : release) {
-						NewsVO clone = new NewsVO(news); //Empêche les java.util.ConcurrentModificationException
-						toEditorInChief.sendObjectMessage(clone);
-						toRemove.add(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
-					}
-				} catch (JMSException e) {
-
-				} finally {
-					for (Integer integer : toRemove) {
-						pressRelease.remove(integer);
+				//To avoid java.util.ConcurrentModificationException
+				Iterator<Entry<Integer, NewsVO>> it2 = pressRelease.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry<Integer, NewsVO> pairs = it2.next();
+					NewsVO news = pairs.getValue();
+					try{
+						toEditorInChief.sendObjectMessage(news);
+						pressRelease.remove(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
+					} catch (JMSException e) {
+						e.printStackTrace();
 					}
 				}
 			}
