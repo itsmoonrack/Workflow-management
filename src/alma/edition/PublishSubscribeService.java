@@ -51,7 +51,7 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 		System.out.println("Service d'édition lancé.");
 	}
 
-	public void onMessage(Message message) {
+	public synchronized void onMessage(Message message) {
 		try {
 			if(message instanceof ObjectMessageImpl){
 
