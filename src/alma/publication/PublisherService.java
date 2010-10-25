@@ -1,7 +1,6 @@
 package alma.publication;
 
 import java.util.Vector;
-import java.util.logging.Level;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;

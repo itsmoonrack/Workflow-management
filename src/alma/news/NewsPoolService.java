@@ -1,7 +1,5 @@
 package alma.news;
 
-import java.util.logging.Level;
-
 import javax.jms.Message;
 import javax.jms.MessageListener;
 

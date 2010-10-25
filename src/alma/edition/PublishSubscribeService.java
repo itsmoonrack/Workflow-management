@@ -1,9 +1,9 @@
 package alma.edition;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -33,8 +33,8 @@ import alma.common.services.TopicMessagePublisher;
  */
 public class PublishSubscribeService extends StatefulBean implements MessageListener {
 
-	private Map<Integer, NewsVO> pressDispatch = new HashMap<Integer, NewsVO>();
-	private Map<Integer, NewsVO> pressRelease = new HashMap<Integer, NewsVO>();
+	private Map<Integer, NewsVO> pressDispatch = Collections.synchronizedMap(new HashMap<Integer, NewsVO>());
+	private Map<Integer, NewsVO> pressRelease = Collections.synchronizedMap(new HashMap<Integer, NewsVO>());
 
 	private TopicMessagePublisher toEditors = new TopicMessagePublisher("editorsTopic");
 	private QueueMessageSender toEditorInChief = new QueueMessageSender("newsToPublishQueue");
@@ -78,15 +78,10 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 		}
 	}
 
-	protected void tick() {
-		//To avoid java.util.ConcurrentModificationException
-		Iterator<Entry<Integer, NewsVO>> it = pressDispatch.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<Integer, NewsVO> pairs = it.next();
-			NewsVO news = pairs.getValue();
+	protected synchronized void tick() {
+		for (NewsVO news : pressDispatch.values()) {
 			toEditors.publishObject(news);
 		}
-
 
 		if (!pressRelease.isEmpty()) { //S'il y a des nouvelles dans la release.
 			System.out.println("Il reste " + pressDispatch.size() + " nouvelles en attente de révision.");
@@ -94,17 +89,14 @@ public class PublishSubscribeService extends StatefulBean implements MessageList
 			if (pressDispatch.isEmpty()) { //S'il ne reste plus de nouvelles à traiter.
 				System.out.println("Envoi de la release à l'éditeur en chef.");
 
-				//To avoid java.util.ConcurrentModificationException
-				Iterator<Entry<Integer, NewsVO>> it2 = pressRelease.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry<Integer, NewsVO> pairs = it2.next();
-					NewsVO news = pairs.getValue();
-					try{
+				try {
+					for (NewsVO news : pressRelease.values()) {
 						toEditorInChief.sendObjectMessage(news);
-						pressRelease.remove(news.id); //Supprime de la release locale seulement si l'envoi n'a pas échoué.
-					} catch (JMSException e) {
-						e.printStackTrace();
+						pressRelease.remove(news.id);
 					}
+				} catch (JMSException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
